@@ -4,10 +4,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    id = models.BigAutoField(primary_key=True, null=False, blank=False)
-    username = models.CharField(unique=True, max_length=150)
-    password = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50, unique=True)
+    password = models.CharField(max_length=255)
+    username = None
 
-    def __str__(self):
-        return self.username
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
