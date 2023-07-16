@@ -17,6 +17,28 @@ class MoneyAccount(models.Model):
     def __str__(self):
         return self.user.email
 
+    def has_sufficient_balance(self, amount):
+        return self.balance >= amount
+
+    def calculate_net_balance(self):
+        return self.income - self.expense
+
+    def add_income(self, amount):
+        self.income += amount
+        self.save()
+
+    def add_expense(self, amount):
+        self.expense += amount
+        self.save()
+
+    def get_account_details(self):
+        return {
+            'user_email': self.user.email,
+            'balance': self.balance,
+            'income': self.income,
+            'expense': self.expense
+        }
+
 
 @receiver(post_save, sender=User)
 def create_money_account(sender, instance, created, **kwargs):
