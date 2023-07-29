@@ -141,7 +141,7 @@ AUTH_USER_MODEL = 'Authentication.User'
 
 CELERY_BEAT_SCHEDULE = {
     "schuduled_task": {
-        "task": "MoneyAccount.tasks.print_last_updated",
-        "schedule": 10.0,
+        "task": "MoneyAccount.tasks.update_general_sources",
+        "schedule": 60.0,
     }
 }
