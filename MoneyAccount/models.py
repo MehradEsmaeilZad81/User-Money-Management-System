@@ -48,7 +48,7 @@ class GeneralSource(models.Model):
         max_digits=10, decimal_places=2, default=100000.00)
     coefficient = models.DecimalField(
         max_digits=2, decimal_places=2, default=0.50)
-    deposit_interval = models.PositiveIntegerField(default=1)
+    deposit_interval = models.PositiveIntegerField(default=10)
     deposit_amount = models.DecimalField(
         max_digits=10, decimal_places=2, default=1000.00)
     last_updated = models.DateTimeField(auto_now=True)

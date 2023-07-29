@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'Authentication.apps.AuthenticationConfig',
     'MoneyAccount.apps.MoneyaccountConfig',
     'rest_framework',
-    'corsheaders',
+    'celery',
+    'flower',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -133,5 +135,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Authentication.User'
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CRENDENTIALS = True
+# CELERY_IMPORTS = [
+#     'MoneyAccount.tasks.print_last_updated',
+# ]
+
+CELERY_BEAT_SCHEDULE = {
+    "schuduled_task": {
+        "task": "MoneyAccount.tasks.print_last_updated",
+        "schedule": 10.0,
+    }
+}
