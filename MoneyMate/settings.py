@@ -143,5 +143,9 @@ CELERY_BEAT_SCHEDULE = {
     "schuduled_task": {
         "task": "MoneyAccount.tasks.update_general_sources",
         "schedule": 60.0,
+    },
+    "schuduled_task1":{
+        "task": "MoneyAccount.tasks.update_subscription",
+        "schedule": 60.0,
     }
 }
