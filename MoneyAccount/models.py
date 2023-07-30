@@ -57,6 +57,41 @@ class GeneralSource(models.Model):
         return self.name
 
 
+class Subscription(models.Model):
+    money_account = models.ForeignKey(MoneyAccount, on_delete=models.CASCADE)
+    general_source = models.ForeignKey(GeneralSource, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    coefficient_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    withdrawal_interval = models.PositiveIntegerField(default=10)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.money_account.user.email} - {self.general_source.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.coefficient_amount:
+            # Calculate the coefficient_amount based on GeneralSource's coefficient and amount invested
+            self.coefficient_amount = (self.general_source.coefficient * self.amount + self.amount)
+        super().save(*args, **kwargs)
+
+
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('W', 'WITHDRAW'),
+        ('D', 'DEPOSIT'),
+    )
+
+    money_account = models.ForeignKey(MoneyAccount, on_delete=models.CASCADE)
+    general_source = models.ForeignKey(GeneralSource, on_delete=models.CASCADE)
+    transaction_type = models.CharField(max_length=1, choices=TRANSACTION_TYPES)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.money_account.user.email} - {self.general_source.name} - {self.get_transaction_type_display()} - {self.transaction_time}"
+
+
+
 @receiver(post_save, sender=User)
 def create_money_account(sender, instance, created, **kwargs):
     # Create a money account for the newly registered user.
