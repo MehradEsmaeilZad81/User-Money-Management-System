@@ -50,12 +50,17 @@ class GeneralSource(models.Model):
         max_digits=2, decimal_places=2, default=0.50)
     deposit_interval = models.PositiveIntegerField(default=10)
     deposit_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=1000.00)
+        max_digits=10, null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.deposit_amount:
+            # Calculate the deposit amount based on inventory and coefficient
+            self.deposit_amount = self.inventory * self.coefficient
+        super().save(*args, **kwargs)
 
 class Subscription(models.Model):
     money_account = models.ForeignKey(MoneyAccount, on_delete=models.CASCADE)
