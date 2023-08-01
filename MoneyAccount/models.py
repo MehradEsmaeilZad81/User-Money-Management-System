@@ -19,18 +19,16 @@ class MoneyAccount(models.Model):
     def __str__(self):
         return self.user.email
 
-    def has_sufficient_balance(self, amount):
-        return self.balance >= amount
-
-    def calculate_net_balance(self):
-        return self.income - self.expense
-
     def add_income(self, amount):
         self.income += amount
+        self.balance = self.income - self.expense
         self.save()
 
     def add_expense(self, amount):
         self.expense += amount
+        self.balance = self.income - self.expense
+        if self.balance < 0:
+            raise ValueError(f'{self.user.email}\'s Balance cannot be negative')
         self.save()
 
     def get_account_details(self):
@@ -56,6 +54,10 @@ class GeneralSource(models.Model):
     def __str__(self):
         return self.name
 
+    def add_amount(self, amount):
+        self.inventory += amount
+        self.save()        
+
     def save(self, *args, **kwargs):
         if not self.deposit_amount:
             # Calculate the deposit amount based on inventory and coefficient
@@ -67,7 +69,7 @@ class Subscription(models.Model):
     general_source = models.ForeignKey(GeneralSource, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
     coefficient_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    withdrawal_interval = models.PositiveIntegerField(default=10)
+    withdrawal_interval = models.PositiveIntegerField(null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -77,6 +79,9 @@ class Subscription(models.Model):
         if not self.coefficient_amount:
             # Calculate the coefficient_amount based on GeneralSource's coefficient and amount invested
             self.coefficient_amount = (self.general_source.coefficient * self.amount + self.amount)
+        if not self.withdrawal_interval:
+            # Calculate the withdrawal_interval based on GeneralSource's deposit_interval
+            self.withdrawal_interval = self.general_source.deposit_interval*2
         super().save(*args, **kwargs)
 
 
