@@ -22,3 +22,9 @@ class SubscriptionRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'GeneralSource with name {} does not have sufficient inventory'.format(general_source_name))
         return data
+
+
+# {
+#     "general_source_name": "Number 1",
+#     "proposed_amount": 1000.00
+# }
