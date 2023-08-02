@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import GeneralSource, Subscription, Transaction, MoneyAccount
-from .serializers import GeneralSourceSerializer, SubscriptionRequestSerializer
+from .serializers import GeneralSourceSerializer, SubscriptionRequestSerializer, SubscriptionSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
@@ -26,6 +26,30 @@ def IsAuthenticated(request):
     user = User.objects.filter(id=payload['id']).first()
     return user
 
+
+class GeneralSourceDetailView(APIView):
+    def get(self, request, pk):
+        user = IsAuthenticated(request)
+        try:
+            general_source = GeneralSource.objects.get(pk=pk)
+        except GeneralSource.DoesNotExist:
+            return Response({"detail": "GeneralSource not found."}, status=404)
+
+        money_account = MoneyAccount.objects.filter(user=user).first()
+        subscription = Subscription.objects.filter(general_source=general_source, money_account=money_account).first()
+        if not subscription:
+            return Response({"detail": "Subscription not found."}, status=404)
+        serializer = SubscriptionSerializer(subscription)
+        return Response(serializer.data)
+
+class MySubscriptionView(APIView):
+    def get(self, request):
+        user = IsAuthenticated(request)
+        money_account = MoneyAccount.objects.filter(user=user).first()
+        subscriptions = Subscription.objects.filter(money_account=money_account)
+        serializer = SubscriptionSerializer(subscriptions, many=True)
+        return Response(serializer.data)
+
 class GeneralSourceView(APIView):
     def get(self, request):
         user = IsAuthenticated(request)
@@ -42,6 +66,11 @@ class GeneralSourceView(APIView):
         amount = serializer.validated_data['proposed_amount']
         general_source = GeneralSource.objects.filter(name=general_source_name).first()
         money_account = MoneyAccount.objects.filter(user=user).first()
+
+        if Subscription.objects.filter(general_source=general_source, money_account=money_account).exists():
+            return Response({
+                'message': 'Subscription already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         general_source.add_amount(amount)
         general_source.save()

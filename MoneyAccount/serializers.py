@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import GeneralSource
+from .models import GeneralSource, Subscription
 
 class GeneralSourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,7 +24,7 @@ class SubscriptionRequestSerializer(serializers.Serializer):
         return data
 
 
-# {
-#     "general_source_name": "Number 1",
-#     "proposed_amount": 1000.00
-# }
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('money_account', 'general_source', 'amount', 'coefficient_amount')

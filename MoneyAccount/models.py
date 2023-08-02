@@ -34,7 +34,7 @@ class MoneyAccount(models.Model):
     def get_account_details(self):
         return {
             'user_email': self.user.email,
-            'balance': self.balance,
+            'balّance': self.balance,
             'income': self.income,
             'expense': self.expense
         }

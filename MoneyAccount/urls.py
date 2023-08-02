@@ -1,6 +1,8 @@
 from django.urls import path, include
-from .views import GeneralSourceView
+from .views import GeneralSourceView, MySubscriptionView, GeneralSourceDetailView
 
 urlpatterns = [
     path('generalsources', GeneralSourceView.as_view()),
+    path('mysubscriptions', MySubscriptionView.as_view()),
+    path('generalsource/<int:pk>/', GeneralSourceDetailView.as_view()),
 ]
