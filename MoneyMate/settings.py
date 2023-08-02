@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'celery',
     'flower',
     'django_celery_beat',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -135,10 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Authentication.User'
 
-# CELERY_IMPORTS = [
-#     'MoneyAccount.tasks.print_last_updated',
-# ]
-
 CELERY_BEAT_SCHEDULE = {
     "schuduled_task": {
         "task": "MoneyAccount.tasks.update_general_sources",
@@ -150,11 +147,11 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-REST_FRAMEWORK = {
-   'DEFAULT_AUTHENTICATION_CLASSES': [
-       'rest_framework.authentication.TokenAuthentication',
-    ],
-#    'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAdminUser'
-#    ),
-}
+# REST_FRAMEWORK = {
+#    'DEFAULT_AUTHENTICATION_CLASSES': [
+#        'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ],
+# #    'DEFAULT_PERMISSION_CLASSES': (
+# #         'rest_framework.permissions.IsAdminUser'
+# #    ),
+# }
