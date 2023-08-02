@@ -56,7 +56,13 @@ class GeneralSource(models.Model):
 
     def add_amount(self, amount):
         self.inventory += amount
-        self.save()        
+        self.save()     
+
+    def withdraw_amount(self, amount):
+        if self.inventory < amount:
+            raise ValueError(f'{self.name}\'s inventory cannot be negative, please wait for few minutes')
+        self.inventory -= amount
+        self.save()   
 
     def save(self, *args, **kwargs):
         if not self.deposit_amount:
@@ -74,6 +80,13 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.money_account.user.email} - {self.general_source.name}"
+
+    def withdraw(self, amount):
+        if self.coefficient_amount < amount:
+            raise ValueError(f'{self.general_source.name} and {self.money_account}\'s coefficient_amount cannot be negative, please wait for few minutes')
+        self.coefficient_amount -= amount
+        self.save()
+
 
     def save(self, *args, **kwargs):
         if not self.coefficient_amount:

@@ -7,7 +7,7 @@ class GeneralSourceSerializer(serializers.ModelSerializer):
         fields = ('name', 'inventory', 'coefficient', 'deposit_interval', 'deposit_amount')
 
     
-class SubscriptionRequestSerializer(serializers.Serializer):
+class SubscriptionRequestSerializer(serializers.ModelSerializer):
     general_source_name = serializers.CharField(max_length=100)
     proposed_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
 
@@ -28,3 +28,15 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ('money_account', 'general_source', 'amount', 'coefficient_amount')
+
+
+    
+class SubscriptionMoneyRequestSerializer(serializers.ModelSerializer):
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    def validate(self, data):
+        amount = data.get('amount')
+        if not amount > 0:
+            raise serializers.ValidationError(
+                'Amount must be greater than 0')
+        return data
