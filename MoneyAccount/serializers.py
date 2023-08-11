@@ -1,12 +1,14 @@
 from rest_framework import serializers
-from .models import GeneralSource, Subscription
+from .models import GeneralSource, Subscription, MoneyAccount
+
 
 class GeneralSourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeneralSource
-        fields = ('name', 'inventory', 'coefficient', 'deposit_interval', 'deposit_amount')
+        fields = ('name', 'inventory', 'coefficient',
+                  'deposit_interval', 'deposit_amount')
 
-    
+
 class SubscriptionRequestSerializer(serializers.ModelSerializer):
     general_source_name = serializers.CharField(max_length=100)
     proposed_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -14,7 +16,8 @@ class SubscriptionRequestSerializer(serializers.ModelSerializer):
     def validate(self, data):
         general_source_name = data.get('general_source_name')
         proposed_amount = data.get('proposed_amount')
-        general_source = GeneralSource.objects.filter(name=general_source_name).first()
+        general_source = GeneralSource.objects.filter(
+            name=general_source_name).first()
         if not general_source:
             raise serializers.ValidationError(
                 'GeneralSource with name {} does not exist'.format(general_source_name))
@@ -27,10 +30,10 @@ class SubscriptionRequestSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ('money_account', 'general_source', 'amount', 'coefficient_amount')
+        fields = ('money_account', 'general_source',
+                  'amount', 'coefficient_amount')
 
 
-    
 class SubscriptionMoneyRequestSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
 
@@ -40,3 +43,9 @@ class SubscriptionMoneyRequestSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Amount must be greater than 0')
         return data
+
+
+class MoneyAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MoneyAccount
+        fields = ('user', 'balance', 'income', 'expense')
