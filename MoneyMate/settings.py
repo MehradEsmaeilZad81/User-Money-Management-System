@@ -141,17 +141,8 @@ CELERY_BEAT_SCHEDULE = {
         "task": "MoneyAccount.tasks.update_general_sources",
         "schedule": 60.0,
     },
-    "schuduled_task1":{
+    "schuduled_task1": {
         "task": "MoneyAccount.tasks.update_subscription",
         "schedule": 60.0,
     }
 }
-
-# REST_FRAMEWORK = {
-#    'DEFAULT_AUTHENTICATION_CLASSES': [
-#        'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ],
-# #    'DEFAULT_PERMISSION_CLASSES': (
-# #         'rest_framework.permissions.IsAdminUser'
-# #    ),
-# }
