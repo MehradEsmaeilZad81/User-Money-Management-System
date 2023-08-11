@@ -16,3 +16,8 @@ db.sqlite3
 
 # Json files
 *.json
+
+# Ignore celerybeat-schedule file
+*.bak
+*.dat
+*.dir
