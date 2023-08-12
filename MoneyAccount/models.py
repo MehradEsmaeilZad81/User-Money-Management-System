@@ -25,11 +25,11 @@ class MoneyAccount(models.Model):
         self.save()
 
     def add_expense(self, amount):
+        if self.balance < amount:
+            raise ValueError(
+                f'{self.user.email}\'s balance cannot be negative!')
         self.expense += amount
         self.balance = self.income - self.expense
-        if self.balance < 0:
-            raise ValueError(
-                f'{self.user.email}\'s Balance cannot be negative')
         self.save()
 
     def get_account_details(self):
@@ -62,7 +62,7 @@ class GeneralSource(models.Model):
     def withdraw_amount(self, amount):
         if self.inventory < amount:
             raise ValueError(
-                f'{self.name}\'s inventory cannot be negative, please wait for few minutes')
+                f'{self.name}\'s inventory cannot be negative!')
         self.inventory -= amount
         self.save()
 
