@@ -40,6 +40,13 @@ class MoneyAccount(models.Model):
             transaction_type=transaction_type
         )
 
+    def create_subscription(self, generalsource, amount):
+        Subscription.objects.create(
+            money_account=self,
+            general_source=generalsource,
+            amount=amount
+        )
+
     def get_account_details(self):
         return {
             'user_email': self.user.email,
