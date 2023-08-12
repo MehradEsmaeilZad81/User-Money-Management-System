@@ -67,6 +67,8 @@ class GeneralSourceDetailView(APIView):
         money_account.add_income(amount)
         money_account.create_transaction(general_source, amount, 'W')
 
+        return Response({"detail": "Withdrawal successful."}, status=200)
+
 
 class MySubscriptionView(APIView):
     def get(self, request):
