@@ -32,6 +32,14 @@ class MoneyAccount(models.Model):
         self.balance = self.income - self.expense
         self.save()
 
+    def create_transaction(self, generalsource, amount, transaction_type):
+        Transaction.objects.create(
+            money_account=self,
+            general_source=generalsource,
+            amount=amount,
+            transaction_type=transaction_type
+        )
+
     def get_account_details(self):
         return {
             'user_email': self.user.email,

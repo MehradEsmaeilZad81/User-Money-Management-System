@@ -65,13 +65,7 @@ class GeneralSourceDetailView(APIView):
         subscription.withdraw(amount)
         general_source.withdraw_amount(amount)
         money_account.add_income(amount)
-
-        Transaction.objects.create(
-            money_account=money_account,
-            general_source=general_source,
-            amount=amount,
-            transaction_type='W'
-        )
+        money_account.create_transaction(general_source, amount, 'W')
 
 
 class MySubscriptionView(APIView):
