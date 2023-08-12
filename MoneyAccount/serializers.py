@@ -35,6 +35,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionMoneyRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('amount',)
+
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     def validate(self, data):
