@@ -47,6 +47,13 @@ class MoneyAccount(models.Model):
             amount=amount
         )
 
+    def create_usertransaction(self, moneyaccount, amount):
+        UserTransaction.objects.create(
+            sender=self,
+            receiver=moneyaccount,
+            amount=amount
+        )
+
     def get_account_details(self):
         return {
             'user_email': self.user.email,
@@ -134,6 +141,17 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.money_account.user.email} - {self.general_source.name} - {self.get_transaction_type_display()} - {self.transaction_time}"
+
+
+class UserTransaction(models.Model):
+    sender = models.ForeignKey(
+        MoneyAccount, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(
+        MoneyAccount, on_delete=models.CASCADE, related_name='receiver')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.sender.user.email} - {self.receiver.user.email} - {self.amount}"
 
 
 @receiver(post_save, sender=User)
