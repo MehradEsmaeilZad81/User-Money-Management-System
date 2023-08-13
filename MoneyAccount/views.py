@@ -149,6 +149,9 @@ class MoneyAccountView(APIView):
         reciver = MoneyAccount.objects.filter(user=user_reciver).first()
         amount = serializer.validated_data['amount']
 
+        if not reciver:
+            return Response({"detail": "Reciver not found."}, status=404)
+
         if sender == reciver:
             return Response({"detail": "You can't send money to yourself."}, status=400)
 
