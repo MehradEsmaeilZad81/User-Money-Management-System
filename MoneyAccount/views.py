@@ -15,6 +15,7 @@ from .serializers import (
     SubscriptionSerializer,
     SubscriptionMoneyRequestSerializer,
     MoneyAccountSerializer,
+    MoneyAccountRequestSerializer,
 )
 
 
@@ -136,3 +137,23 @@ class MoneyAccountView(APIView):
         moneyaccounts = MoneyAccount.objects.all()
         serializer = MoneyAccountSerializer(moneyaccounts, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        user = IsAuthenticated(request)
+        serializer = MoneyAccountRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_reciver = User.objects.filter(
+            email=serializer.validated_data['email']).first()
+
+        sender = MoneyAccount.objects.filter(user=user).first()
+        reciver = MoneyAccount.objects.filter(user=user_reciver).first()
+        amount = serializer.validated_data['amount']
+
+        if sender == reciver:
+            return Response({"detail": "You can't send money to yourself."}, status=400)
+
+        sender.add_expense(amount)
+        reciver.add_income(amount)
+        sender.create_usertransaction(reciver, amount)
+
+        return Response({"detail": "Transaction successful."}, status=200)

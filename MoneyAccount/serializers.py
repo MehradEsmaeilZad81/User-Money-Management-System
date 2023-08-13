@@ -50,6 +50,27 @@ class SubscriptionMoneyRequestSerializer(serializers.ModelSerializer):
 
 
 class MoneyAccountSerializer(serializers.ModelSerializer):
+    user_email = serializers.SerializerMethodField()
+
     class Meta:
         model = MoneyAccount
-        fields = ('user', 'balance', 'income', 'expense')
+        fields = ('user_email', 'balance', 'income', 'expense')
+
+    def get_user_email(self, obj):
+        return obj.user.email
+
+
+class MoneyAccountRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MoneyAccount
+        fields = ('email', 'amount')
+
+    email = serializers.CharField(max_length=100)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    def validate(self, data):
+        amount = data.get('amount')
+        if not amount > 0:
+            raise serializers.ValidationError(
+                'Amount must be greater than 0')
+        return data
